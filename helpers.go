@@ -1,6 +1,6 @@
 package main
 
-import ("fmt";"os";og_log "log";"strconv")
+import ("fmt";"os";"strconv")
 
 type Log struct {}
 
@@ -21,7 +21,8 @@ func strip_esc(msg string) string {
 
 func (l Log) generic(pre string, msg string, a ...any) {
 	msg = "\033[0m\033[37m[\033[0m"+pre+"\033[0m\033[37m]:\033[0m "+msg
-	og_log.Printf(msg, a...)
+	t := time.Parse("2006/01/02", time.Now())
+	fmt.Printf(msg+" time{"+t+"}"+"\n", a...)
 }
 
 func (l Log) Info(msg string, a ...any) {
