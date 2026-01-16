@@ -34,6 +34,9 @@ func hanConn(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	typ := http.DetectContentType(f_B)
+	w.Header().Set("Content-Type", typ)
+
 	log.ReqParams(req_page, resp)
 	w.Write(f_B)
 }

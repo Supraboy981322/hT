@@ -78,6 +78,7 @@ func (l Log) HttpErr(
 			"\033[38;2;255;117;127merr"+
 			"\033[0;38;2;130;139;184m{"+
 			"\033[0m%v}\033[0m", page, e)
+	w.Header().Set("Content-Type", "text/plain")
 	http.Error(w, "server err", resp)
 }
 
