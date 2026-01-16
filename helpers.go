@@ -26,9 +26,13 @@ func strip_esc(msg string) string {
 }
 
 func (l Log) generic(pre string, msg string, a ...any) {
-	msg = "\033[0m\033[37m[\033[0m"+pre+"\033[0m\033[37m]:\033[0m "+msg
+	msg = "\033[0m\033[37m[\033[0m"+pre+"\033[0m\033[37m]:\033[0m "+msg+"\033[0m"
 	t := time.Now().Format("2006/01/02 15:04:05")
-	fmt.Printf(msg+" \033[0;1mtime\033[0;38;2;130;139;184m{\033[0m"+t+"\033[0;38;2;130;139;184m}\033[0m"+"\n", a...)
+	msg += "\033[0;38;2;130;139;184m ; \033[0m"+
+			"\033[0;1mtime\033[0;38;2;130;139;184m"+
+			"{\033[0m"+t+"\033[0;38;2;130;139;184m}"+
+			"\033[0m\n"
+	fmt.Printf(msg, a...)
 }
 
 func (l Log) Info(msg string, a ...any) {
