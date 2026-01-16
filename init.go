@@ -84,7 +84,7 @@ func parse_args() {
 			}
 			if arg[0] == '-' && len(arg) > 1 {
 				switch arg[1:] {
-				 case "no-config": continue
+				 case "no-config": continue //already handled when parsed config
 				 case "dir", "directory": next()
 				 case "port": port = ":"+next()
 				 default: erorF("invalid arg ("+og_arg+")", nil)
