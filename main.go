@@ -14,7 +14,7 @@ var (
 
 func main() {
 	http.HandleFunc("/", hanConn)
-	log.Info("listening on port %s", port[1:])
+	log.Info("listening port{%s}", port[1:])
 	log.Fatal("%v", http.ListenAndServe(port, nil))
 }
 
