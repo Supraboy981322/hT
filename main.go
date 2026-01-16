@@ -4,11 +4,13 @@ import(
 	"os"
 	"errors"
 	"net/http"
+	"path/filepath"
 )
 
 var (
 	args = os.Args[1:]
 	port = ":3784"
+	dir string
 	log Log
 )
 
@@ -21,8 +23,9 @@ func main() {
 func hanConn(w http.ResponseWriter, r *http.Request) {
 	req_page := r.URL.Path[1:]
 	if req_page == "" { req_page = "index.html" }
-	resp := 200 
-	f_B, e := os.ReadFile(req_page)
+	resp := 200
+	fi_P := filepath.Join(dir, req_page)
+	f_B, e := os.ReadFile(fi_P)
 	if e != nil {
 		if errors.Is(e, os.ErrNotExist) {
 			http.Error(w, "not found", 404) ; return

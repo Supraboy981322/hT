@@ -90,3 +90,5 @@ func eror(msg string, e error) {
 func erorF(msg string, e error) {
 	eror(msg, e) ; os.Exit(1)
 }
+
+func erorF_raw(e error) { erorF("%v", e) }
