@@ -3,7 +3,6 @@ package main
 import(
 	"os"
 	"fmt"
-	"mime"
 	"slices"
 	"errors"
 	"strings"
@@ -11,8 +10,6 @@ import(
 )
 
 func init() {
-	mime.AddExtensionType(".js", "application/javascript")
-	mime.AddExtensionType(".mjs", "application/javascript")
 	read_config()
 	parse_args()
 }

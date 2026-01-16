@@ -2,6 +2,8 @@ package main
 
 import(
 	"os"
+	"time"
+	"bytes"
 	"errors"
 	"net/http"
 	"path/filepath"
@@ -34,9 +36,6 @@ func hanConn(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	typ := http.DetectContentType(f_B)
-	w.Header().Set("Content-Type", typ)
-
 	log.ReqParams(req_page, resp)
-	w.Write(f_B)
+	http.ServeContent(w, r, req_page, time.Now(), bytes.NewReader(f_B))
 }
