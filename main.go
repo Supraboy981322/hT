@@ -20,6 +20,7 @@ func main() {
 
 func hanConn(w http.ResponseWriter, r *http.Request) {
 	req_page := r.URL.Path[1:]
+	if req_page == "" { req_page = "index.html" }
 	resp := 200 
 	f_B, e := os.ReadFile(req_page)
 	if e != nil {
