@@ -10,6 +10,7 @@ import(
 )
 
 var (
+	page_overrides = make(map[string]string)
 	args = os.Args[1:]
 	port = ":3784"
 	dir string
@@ -25,6 +26,7 @@ func main() {
 func hanConn(w http.ResponseWriter, r *http.Request) {
 	req_page := r.URL.Path[1:]
 	if req_page == "" { req_page = "index.html" }
+	if page_overrides[req_page] != "" { req_page = page_overrides[req_page] }
 	resp := 200
 	fi_P := filepath.Join(dir, req_page)
 	f_B, e := os.ReadFile(fi_P)

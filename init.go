@@ -63,6 +63,10 @@ func read_config() {
 			if _, e := strconv.Atoi(v); e != nil {
 				erorF("invalid value for "+esc_k+"; "+esc_v+" is not a number", nil)
 			} else { port = ":"+v }
+		 case "overrides":
+			if e := parse_overrides(v); e != nil {
+				erorF_raw(e)
+			}
 		 default:
 			erorF("invalid config key: "+esc_k+" (line "+li_N+")", nil)
 		}
@@ -101,3 +105,18 @@ func parse_args() {
 		}
 	}
 }
+
+func parse_overrides(v_R string) error {
+	entries := strings.Split(v_R, ";")
+	for _, e_R := range entries {
+		e_R = strings.TrimSpace(e_R)
+		if len(e_R) == 0 { continue } 
+		fields := strings.Split(e_R, "=")
+		if len(fields) < 2 { return errors.New("not a key-value pair") }
+		k := strings.TrimSpace(fields[0])
+		v := strings.TrimSpace(fields[1])
+		page_overrides[k] = v
+	}
+
+	return nil
+} 
