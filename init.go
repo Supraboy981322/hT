@@ -63,8 +63,12 @@ func read_config() {
 			if _, e := strconv.Atoi(v); e != nil {
 				erorF("invalid value for "+esc_k+"; "+esc_v+" is not a number", nil)
 			} else { port = ":"+v }
-		 case "overrides":
+		 case "override":
 			if e := parse_overrides(v); e != nil {
+				erorF_raw(e)
+			}
+		 case "placeholder replacement":
+			if e := populate_placeholder_replacements(v); e != nil {
 				erorF_raw(e)
 			}
 		 default:
@@ -81,10 +85,10 @@ func parse_args() {
 			og_arg := arg ; arg = arg[1:]
 			next := func() string {
 				if i+1 >= len(args) {
-					erorF("used '"+og_arg+"' but recieved no value", nil)
+					erorF("used '"+og_arg+"' but received no value", nil)
 					return ""
+
 				} else { tak = append(tak, i+1) ; return args[i+1] }
-				panic(nil)
 			}
 			if arg[0] == '-' && len(arg) > 1 {
 				switch arg[1:] {
@@ -120,3 +124,18 @@ func parse_overrides(v_R string) error {
 
 	return nil
 } 
+
+func populate_placeholder_replacements(v_R string) error { 
+	entries := strings.Split(v_R, ";")
+	for _, e_R := range entries {
+		e_R = strings.TrimSpace(e_R)
+		if len(e_R) == 0 { continue } 
+		fields := strings.Split(e_R, "=")
+		if len(fields) < 2 { return errors.New("not a key-value pair") }
+		k := strings.TrimSpace(fields[0])
+		v := strings.TrimSpace(fields[1])
+		placeholder_replacements[k] = v
+	}
+
+	return nil
+}

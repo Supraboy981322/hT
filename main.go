@@ -5,11 +5,13 @@ import(
 	"time"
 	"bytes"
 	"errors"
+	"strings"
 	"net/http"
 	"path/filepath"
 )
 
 var (
+	placeholder_replacements = make(map[string]string)
 	page_overrides = make(map[string]string)
 	args = os.Args[1:]
 	port = ":3784"
@@ -38,6 +40,23 @@ func hanConn(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	{
+		f := strings.Split(req_page, ".")
+		if len(f) > 1 {
+			if f[len(f)-1] == "html" { f_B = replace_placeholders(f_B) }
+		}
+	}
+
 	log.ReqParams(req_page, resp)
 	http.ServeContent(w, r, req_page, time.Now(), bytes.NewReader(f_B))
+}
+
+func replace_placeholders(og []byte) []byte {
+	res := string(og)
+	
+	for p, r := range placeholder_replacements {
+		res = strings.ReplaceAll(res, p, r)
+	}
+
+	return []byte(res)
 }
