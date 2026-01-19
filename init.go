@@ -198,8 +198,6 @@ func init_populate_embeds(v_R string) error {
 			}
 		}
 
-		for i, t := range p.res { fmt.Printf("%d{%s}\n", i, t) }
-
 		if len(p.res) < 3 {
 			if len(p.res) == 1 {
 				p.res = append(p.res, p.res[0])
@@ -211,14 +209,15 @@ func init_populate_embeds(v_R string) error {
 					}
 				} 
 			}
-		}; if len(p.res) < 3 { return errors.New("invalid value") }
+		}; if len(p.res) < 3 {
+			return errors.New("invalid value")
+		}
 
 		em := embed_stuff {
 			filename: strings.TrimSpace(p.res[1]),
 			pre: strings.TrimSpace(p.res[0]),
 			after: strings.TrimSpace(p.res[2]),
 		}
-		fmt.Println(em.filename)
 		embed_replacements[k] = em
 	}
 	return nil

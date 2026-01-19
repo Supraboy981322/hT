@@ -2,7 +2,6 @@ package main
 
 import(
 	"os"
-	"fmt"
 	"time"
 	"bytes"
 	"errors"
@@ -74,7 +73,6 @@ func populate_embeds(og []byte) []byte {
 	res := string(og)
 	for p, fi_s := range embed_replacements {
 		if !strings.Contains(res, p) { continue }
-		fmt.Println(fi_s.filename)
 		fN := filepath.Join(dir, fi_s.filename)
 
 		fi_b, e := os.ReadFile(fN)
@@ -85,8 +83,6 @@ func populate_embeds(og []byte) []byte {
 		if fi_str[len(fi_str)-1] == '\n' {
 			fi_str = fi_str[:len(fi_str)-1]
 		}
-
-		fmt.Printf("pre{%s} after{%s}\n", fi_s.pre, fi_s.after)
 
 		fi_str = fi_s.pre + fi_str + fi_s.after
 
