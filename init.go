@@ -71,6 +71,10 @@ func read_config() {
 			if e := populate_placeholder_replacements(v); e != nil {
 				erorF_raw(e)
 			}
+		case "inline embed replacement":
+			if e := init_populate_embeds(v); e != nil {
+				erorF_raw(e)
+			}
 		 default:
 			erorF("invalid config key: "+esc_k+" (line "+li_N+")", nil)
 		}
@@ -137,5 +141,19 @@ func populate_placeholder_replacements(v_R string) error {
 		placeholder_replacements[k] = v
 	}
 
+	return nil
+}
+
+func init_populate_embeds(v_R string) error {
+	entries := strings.Split(v_R, ";")
+	for _, e_R := range entries {
+		e_R = strings.TrimSpace(e_R)
+		if len(e_R) == 0 { continue }
+		fields := strings.Split(e_R, "=")
+		if len(fields) < 2 { return errors.New("Not a key-value pair") }
+		k := strings.TrimSpace(fields[0])
+		v := strings.TrimSpace(fields[1])
+		embed_replacements[k] = v
+	}
 	return nil
 }

@@ -11,6 +11,7 @@ import(
 )
 
 var (
+	embed_replacements = make(map[string]string)
 	placeholder_replacements = make(map[string]string)
 	page_overrides = make(map[string]string)
 	args = os.Args[1:]
@@ -43,7 +44,8 @@ func hanConn(w http.ResponseWriter, r *http.Request) {
 	{
 		f := strings.Split(req_page, ".")
 		if len(f) > 1 {
-			if f[len(f)-1] == "html" { f_B = replace_placeholders(f_B) }
+			f_B = replace_placeholders(f_B)
+			f_B = populate_embeds(f_B)
 		}
 	}
 
@@ -58,5 +60,24 @@ func replace_placeholders(og []byte) []byte {
 		res = strings.ReplaceAll(res, p, r)
 	}
 
+	return []byte(res)
+}
+
+func populate_embeds(og []byte) []byte {
+	res := string(og)
+	for p, fi_N := range embed_replacements {
+		if !strings.Contains(res, p) { continue }
+		fi_N = filepath.Join(dir, fi_N)
+
+		fi_b, e := os.ReadFile(fi_N)
+		if e != nil { log.Err("%v", e) }
+		if len(fi_b) < 1 { continue }
+
+		fi_str := string(fi_b)
+		if fi_str[len(fi_str)-1] == '\n' {
+			fi_str = fi_str[:len(fi_str)-1]
+		}
+		res = strings.ReplaceAll(res, p, fi_str)
+	}
 	return []byte(res)
 }
