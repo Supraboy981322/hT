@@ -153,7 +153,73 @@ func init_populate_embeds(v_R string) error {
 		if len(fields) < 2 { return errors.New("Not a key-value pair") }
 		k := strings.TrimSpace(fields[0])
 		v := strings.TrimSpace(fields[1])
-		embed_replacements[k] = v
+		p := struct {
+			mem string
+			loc rune
+			esc bool
+			res []string
+		}{ res: []string{}, loc: '_' }
+		for _, c := range v {
+			if p.esc {
+				switch c {
+				 case 'n': p.mem += "\n"
+				 case '\\': p.esc = false
+				 default: p.mem += string(c)
+				}
+				p.esc = false ; continue
+			}
+			switch c {
+				case '(': if p.loc == '_' {
+					p.loc = 'i'
+				} else { p.mem += string(c) }
+
+			 case ')': if p.loc == 'i' {
+					p.res = append(p.res, p.mem)
+					p.mem = "" ; p.loc = '_'
+				} else { p.mem += string(c) }
+
+			 case '\\': p.esc = true
+
+			 case '"':
+				switch p.loc {
+				 case '_':
+					if p.mem != "" {
+						p.res = append(p.res, p.mem)
+						p.mem = ""
+					}; p.loc = 'q'
+				 case 'q':
+					p.res = append(p.res, p.mem)
+					p.mem = "" ; p.loc = '_'
+				 default: p.mem += string(c)
+				}
+
+			 default:
+				if p.loc == '_' { continue } else { p.mem += string(c) }
+			}
+		}
+
+		for i, t := range p.res { fmt.Printf("%d{%s}\n", i, t) }
+
+		if len(p.res) < 3 {
+			if len(p.res) == 1 {
+				p.res = append(p.res, p.res[0])
+				p.res[0] = "" ; p.res = append(p.res, "")
+			} else {
+				for _, f := range p.res {
+					if _, e := os.Stat(f); e != nil {
+						p.res = []string{"", f, ""} ; break
+					}
+				} 
+			}
+		}; if len(p.res) < 3 { return errors.New("invalid value") }
+
+		em := embed_stuff {
+			filename: strings.TrimSpace(p.res[1]),
+			pre: strings.TrimSpace(p.res[0]),
+			after: strings.TrimSpace(p.res[2]),
+		}
+		fmt.Println(em.filename)
+		embed_replacements[k] = em
 	}
 	return nil
 }
